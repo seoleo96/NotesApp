@@ -22,7 +22,8 @@ class MainActivity : ComponentActivity() {
                             title = {
                                 Text(text = "NotesApp")
                             },
-                            backgroundColor = Color.Blue
+                            backgroundColor = Color.Blue,
+                            contentColor = Color.White,
                         )
                     }
                 ) {
