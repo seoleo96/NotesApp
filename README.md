@@ -1,4 +1,0 @@
-# NotesApp
-# NotesApp
-# NotesApp
-# NotesApp
