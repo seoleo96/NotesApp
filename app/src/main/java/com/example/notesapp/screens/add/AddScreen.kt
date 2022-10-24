@@ -10,7 +10,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.List
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -29,17 +31,25 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.notesapp.NoteColors
-import com.example.notesapp.ui.theme.*
+import com.example.notesapp.utils.NoteColors
+import com.example.notesapp.data.cache.NoteEntity
+import com.example.notesapp.ui.theme.BackgroundColor
+import com.example.notesapp.ui.theme.ShapeBackgroundColor
+import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
-fun AddScreen(navController: NavHostController) {
+fun AddScreen(navController: NavHostController, ) {
+    val viewModel: AddScreenViewModel = getViewModel()
+    println("vm - ${viewModel.toString()}")
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         backgroundColor = BackgroundColor,
     ) {
-        NoteAddContent(navController)
+        NoteAddContent(navController){
+            viewModel.saveNote(note = it)
+        }
     }
 }
 
@@ -47,11 +57,13 @@ fun AddScreen(navController: NavHostController) {
 @Composable
 fun NoteAddContent(
     navController: NavHostController,
-    viewModel: AddScreenViewModel = viewModel()
+    noteEntity: (NoteEntity) -> Unit
 ) {
+
     val titleRemember = remember { mutableStateOf("") }
     val noteRemember = remember { mutableStateOf("") }
     val expanded = remember { mutableStateOf(false) }
+    val noteColorRemember = remember { mutableStateOf(NoteColors.GreyColor) }
     Column(
     ) {
         Box(
@@ -91,7 +103,20 @@ fun NoteAddContent(
                             .clip(shape = RoundedCornerShape(24))
                             .background(ShapeBackgroundColor)
                             .clickable {
-                                viewModel.saveNote()
+                                val note = NoteEntity(
+                                    id = 0,
+                                    title = titleRemember.value,
+                                    note = noteRemember.value,
+                                    noteBackgroundColor = noteColorRemember.value.ordinal,
+                                    System.currentTimeMillis()
+                                )
+                                noteEntity(note)
+                                println("noteColor - ${noteColorRemember.value.name}")
+                                println("title - ${titleRemember.value}")
+                                println("note - ${noteRemember.value}")
+                                noteRemember.value = ""
+                                titleRemember.value = ""
+                                noteColorRemember.value = NoteColors.values()[0]
                             },
                         contentAlignment = Alignment.Center
                     ) {
@@ -108,6 +133,8 @@ fun NoteAddContent(
                             .background(ShapeBackgroundColor)
                             .clickable {
                                 println("expanded click - ${expanded.value}")
+                                println("title - ${titleRemember.value}")
+                                println("note - ${noteRemember.value}")
                                 expanded.value = !expanded.value
                             },
                         contentAlignment = Alignment.Center
@@ -120,6 +147,7 @@ fun NoteAddContent(
                             println("noteColor - ${noteColor.name}")
                             println("expanded.value - ${expanded.value}")
                             expanded.value = false
+                            noteColorRemember.value = noteColor
                         }
                     }
                 }

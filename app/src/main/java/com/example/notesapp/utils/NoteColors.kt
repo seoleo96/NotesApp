@@ -1,4 +1,4 @@
-package com.example.notesapp
+package com.example.notesapp.utils
 
 import androidx.compose.ui.graphics.Color
 import com.example.notesapp.ui.theme.*
