@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -18,13 +19,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.notesapp.R
+import com.example.notesapp.navigation.NavRoute
 import com.example.notesapp.ui.theme.BackgroundColor
 import com.example.notesapp.ui.theme.ShapeBackgroundColor
+import com.example.notesapp.ui.theme.Typography
 
 
 @Composable
@@ -34,8 +38,11 @@ fun MainScreen(navController: NavHostController) {
         backgroundColor = BackgroundColor,
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /*TODO*/ },
+                onClick = {
+                          navController.navigate(NavRoute.Add.route)
+                },
                 backgroundColor = ShapeBackgroundColor,
+                modifier = Modifier.padding(end = 16.dp, bottom = 16.dp)
             ) {
                 Icon(
                     Icons.Filled.Add,
@@ -51,40 +58,36 @@ fun MainScreen(navController: NavHostController) {
 }
 
 @Composable
-fun NoteContent(){
+fun NoteContent() {
     Column(
     ) {
         Box(
             modifier = Modifier
-                .fillMaxHeight(fraction = 0.1f)
-                .fillMaxWidth()
-                .padding(start = 16.dp, top = 16.dp, bottom = 16.dp),
-            contentAlignment = Alignment.CenterStart
+                .size(Constraints.Infinity.dp, 72.dp),
+            contentAlignment = Alignment.Center
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(end = 16.dp),
+                    .padding(all = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     "Notes",
                     color = Color.White,
-                    fontSize = 32.sp,
                     textAlign = TextAlign.Start,
-                    modifier = Modifier.fillMaxWidth(0.5f)
+                    fontSize = Typography.h4.fontSize
                 )
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(),
+                        .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.End
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(42.dp)
                             .clip(shape = RoundedCornerShape(24))
                             .background(ShapeBackgroundColor)
                             .clickable {
@@ -97,10 +100,10 @@ fun NoteContent(){
                             tint = Color.White,
                         )
                     }
-                    Box(modifier = Modifier.width(24.dp))
+                    Spacer(modifier = Modifier.width(24.dp))
                     Box(
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(42.dp)
                             .clip(shape = RoundedCornerShape(24))
                             .background(color = ShapeBackgroundColor)
                             .clickable {
@@ -116,20 +119,21 @@ fun NoteContent(){
                 }
             }
         }
-        Column(
-            modifier = Modifier.fillMaxSize()
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(vertical = 8.dp)
         ) {
-            NoteItem()
-            NoteItem2()
-            NoteItem()
-            NoteItem2()
-            NoteItem()
+            items(10) {
+                NoteItem()
+            }
         }
     }
 }
 
 @Composable
-fun EmptyContent(){
+fun EmptyContent() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -157,14 +161,15 @@ fun EmptyContent(){
 }
 
 @Composable
-fun NoteItem(){
-    Card(modifier = Modifier
-        .fillMaxWidth()
-        .padding(start = 16.dp, end = 16.dp)
-        .clip(shape = RoundedCornerShape(25))
-        .clickable {
+fun NoteItem() {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp)
+            .clip(shape = RoundedCornerShape(25))
+            .clickable {
 
-        },
+            },
     ) {
         Text(
             text = "First Title",
@@ -174,15 +179,18 @@ fun NoteItem(){
             modifier = Modifier.padding(24.dp)
         )
     }
-    Box(modifier = Modifier.height(16.dp))
 }
 
 @Composable
-fun NoteItem2(){
-    Card(modifier = Modifier
-        .fillMaxWidth()
-        .padding(start = 16.dp, end = 16.dp)
-        .clip(shape = RoundedCornerShape(25))
+fun NoteItem2() {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp)
+            .clip(shape = RoundedCornerShape(25))
+            .clickable {
+
+            },
     ) {
         Text(
             text = "First Title,\nSecond Titleasdhjas",
