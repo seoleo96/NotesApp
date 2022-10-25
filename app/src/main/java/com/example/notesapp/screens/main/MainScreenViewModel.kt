@@ -15,6 +15,7 @@ class MainScreenViewModel(
     private val _mainState = MutableStateFlow<MainScreenState>(MainScreenState.Empty)
     val mainState : StateFlow<MainScreenState>  = _mainState
     init {
+        _mainState.value = MainScreenState.Loading
         viewModelScope.launch(Dispatchers.IO) {
             noteRepository.notes().collect{notes ->
                withContext(Dispatchers.Main){

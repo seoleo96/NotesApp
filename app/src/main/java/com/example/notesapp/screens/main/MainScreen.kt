@@ -37,7 +37,7 @@ import org.koin.androidx.compose.getViewModel
 
 
 @Composable
-fun MainScreen(navController: NavHostController, ) {
+fun MainScreen(navController: NavHostController, mainScreenViewModel: MainScreenViewModel, ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         backgroundColor = BackgroundColor,
@@ -58,14 +58,13 @@ fun MainScreen(navController: NavHostController, ) {
             }
         }
     ) {
-       NoteContent(navController)
+       NoteContent(navController, mainScreenViewModel)
     }
 }
 
 @Composable
-fun NoteContent(navController: NavHostController,viewModel: MainScreenViewModel = getViewModel()) {
-    Column(
-    ) {
+fun NoteContent(navController: NavHostController,viewModel: MainScreenViewModel) {
+    Column {
         Box(
             modifier = Modifier
                 .size(Constraints.Infinity.dp, 72.dp),
@@ -124,23 +123,29 @@ fun NoteContent(navController: NavHostController,viewModel: MainScreenViewModel 
                 }
             }
         }
-        val mainState: State<MainScreenState> = viewModel.mainState.collectAsState()
-        val state = mainState.value
-        if(state is MainScreenState.Empty){
-            EmptyContent()
-        }else if(state is MainScreenState.Data){
-            println("size - ${state.notes.size}")
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(vertical = 8.dp)
-            ) {
-                items(state.notes.size) {note->
-                    println("content - ${state.notes[note]}")
 
-                    NoteItem(state.notes[note])
+        val mainState: State<MainScreenState> = viewModel.mainState.collectAsState()
+        when (val state = mainState.value) {
+            is MainScreenState.Empty -> {
+                EmptyContent()
+            }
+            is MainScreenState.Data -> {
+                println("size - ${state.notes.size}")
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(vertical = 8.dp)
+                ) {
+                    items(state.notes.size) {note->
+                        println("content - ${state.notes[note]}")
+
+                        NoteItem(state.notes[note])
+                    }
                 }
+            }
+            else -> {
+                CircularProgressIndicator()
             }
         }
 
@@ -185,43 +190,15 @@ fun NoteItem(note: NoteEntity) {
             .clickable {
 
             },
+        backgroundColor = NoteColors.values()[note.noteBackgroundColor].color()
+
     ) {
         Text(
             text = note.title,
             maxLines = 2,
             fontSize = 24.sp,
-            color = NoteColors.values()[note.noteBackgroundColor].color(),
+            color = Color.White,
             modifier = Modifier.padding(24.dp)
         )
-    }
-}
-
-@Composable
-fun NoteItem2() {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp)
-            .clip(shape = RoundedCornerShape(25))
-            .clickable {
-
-            },
-    ) {
-        Text(
-            text = "First Title,\nSecond Titleasdhjas",
-            maxLines = 2,
-            fontSize = 24.sp,
-            color = Color.Black,
-            modifier = Modifier.padding(24.dp)
-        )
-    }
-    Box(modifier = Modifier.height(16.dp))
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewMain() {
-    MaterialTheme {
-        MainScreen(navController = rememberNavController())
     }
 }

@@ -23,31 +23,25 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.example.notesapp.utils.NoteColors
 import com.example.notesapp.data.cache.NoteEntity
 import com.example.notesapp.ui.theme.BackgroundColor
 import com.example.notesapp.ui.theme.ShapeBackgroundColor
-import org.koin.androidx.compose.getViewModel
-import org.koin.androidx.compose.koinViewModel
+import com.example.notesapp.utils.NoteColors
 
 
 @Composable
-fun AddScreen(navController: NavHostController, ) {
-    val viewModel: AddScreenViewModel = getViewModel()
+fun AddScreen(navController: NavHostController, viewModel: AddScreenViewModel) {
     println("vm - ${viewModel.toString()}")
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         backgroundColor = BackgroundColor,
     ) {
-        NoteAddContent(navController){
+        NoteAddContent(navController) {
             viewModel.saveNote(note = it)
         }
     }
@@ -68,7 +62,9 @@ fun NoteAddContent(
     ) {
         Box(
             modifier = Modifier
-                .size(Constraints.Infinity.dp, 72.dp),
+                .size(Constraints.Infinity.dp, 72.dp)
+                .clickable {
+                },
             contentAlignment = Alignment.Center
         ) {
             Row(
@@ -111,9 +107,6 @@ fun NoteAddContent(
                                     System.currentTimeMillis()
                                 )
                                 noteEntity(note)
-                                println("noteColor - ${noteColorRemember.value.name}")
-                                println("title - ${titleRemember.value}")
-                                println("note - ${noteRemember.value}")
                                 noteRemember.value = ""
                                 titleRemember.value = ""
                                 noteColorRemember.value = NoteColors.values()[0]
@@ -132,9 +125,6 @@ fun NoteAddContent(
                             .clip(shape = RoundedCornerShape(24))
                             .background(ShapeBackgroundColor)
                             .clickable {
-                                println("expanded click - ${expanded.value}")
-                                println("title - ${titleRemember.value}")
-                                println("note - ${noteRemember.value}")
                                 expanded.value = !expanded.value
                             },
                         contentAlignment = Alignment.Center
@@ -259,14 +249,6 @@ fun ColorMenu(
                 }
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun PreviewAddNote() {
-    MaterialTheme(colors = MaterialTheme.colors) {
-        AddScreen(navController = rememberNavController())
     }
 }
 
